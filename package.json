@@ -1,6 +1,6 @@
 {
-  "name": "materio-mui-react-nextjs-admin-template-free",
-  "description": "Most Powerful & Comprehensive Free MUI React NextJS Admin Dashboard Template built for developers! 🚀",
+  "name": "LMS",
+  "description": "🚀",
   "license": "MIT",
   "version": "1.0.0",
   "author": {
@@ -47,6 +47,7 @@
     "@emotion/react": "^11.7.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.6.0",
+    "@hookform/resolvers": "^3.3.4",
     "@mui/lab": "^5.0.0-alpha.70",
     "@mui/material": "^5.4.3",
     "@popperjs/core": "^2.11.2",
@@ -61,9 +62,12 @@
     "react-apexcharts": "^1.3.9",
     "react-datepicker": "^4.5.0",
     "react-dom": "17.0.2",
+    "react-hook-form": "^7.51.0",
     "react-intl": "^6.6.2",
     "react-perfect-scrollbar": "^1.5.8",
-    "react-popper": "^2.2.5"
+    "react-popper": "^2.2.5",
+    "react-toastify": "^10.0.4",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

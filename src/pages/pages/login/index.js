@@ -43,7 +43,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
 //login post api
-import loginApi from '../../../api/api'
+import {loginApi} from '../../../api/api'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
