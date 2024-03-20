@@ -47,9 +47,9 @@ const navigation = () => {
       sectionTitle: 'User Interface'
     },
     {
-      title: 'Typography',
+      title: 'Register New User',
       icon: FormatLetterCase,
-      path: '/typography'
+      path: '/addUser'
     },
     {
       title: 'Icons',
