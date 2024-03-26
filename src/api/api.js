@@ -25,4 +25,20 @@ const registerUserApi = async (values) => {
 
 export { registerUserApi };
 
+const getUsersByPage = async (
+  page,
+  rowsPerPage,
+  sort = "userId",
+  direction = "DESC"
+) => {
+  const response = await axios.get(`${url + "/user"}/auth/pages?page=${page}&size=${rowsPerPage}&sort=${sort}&direction=${direction}`, 
+  {
+      headers: authHeader()
+  });
+  
+return response.data;
+};
+
+export { getUsersByPage };
+
 

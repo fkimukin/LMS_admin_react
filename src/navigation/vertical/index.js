@@ -52,6 +52,11 @@ const navigation = () => {
       path: '/addUser'
     },
     {
+      title: 'Update User',
+      icon: FormatLetterCase,
+      path: '/updateUser'
+    },
+    {
       title: 'Icons',
       path: '/icons',
       icon: GoogleCirclesExtended
