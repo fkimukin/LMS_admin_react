@@ -1,4 +1,4 @@
-import { forwardRef, useState } from 'react'
+import { forwardRef, useState, useEffect } from 'react'
 import DatePicker from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -25,23 +25,15 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup'
 import UserTable from './userTable'
 
-// ** Icons Imports
-import EyeOutline from 'mdi-material-ui/EyeOutline'
-import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-
-import {registerUserApi} from '../../api/api'
+import {updateUserAdmin} from '../../api/api'
 
 
 
 
 
-const FormLayoutsSeparator = () => {
-  const [passValues, setPassValues] = useState({
-    
-    showPassword: false,
-    showPassword2: false,
-
-  })
+const FormLayouts = () => {
+  const [selectedUser, setSelectedUser] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState('');
 
   const handleClear = () => {
     formik.resetForm();
@@ -49,6 +41,11 @@ const FormLayoutsSeparator = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const roleMapping = {
+    Administrator: 'ROLE_ADMIN',
+    Dean: 'ROLE_DEAN',
+    Chairman: 'ROLE_CHAIRMAN',
+  }
 
 
 const formik = useFormik({
@@ -56,9 +53,7 @@ const formik = useFormik({
       userName: '',
       firstName: '',
       lastName: '',
-      role: '',
-      password: '',
-      password2: '',
+      role: [],
       email: '',
       phoneNumber: '',
       address: '',
@@ -82,19 +77,9 @@ const formik = useFormik({
       email: Yup.string()
         .email('Invalid email address')
         .required('Please enter email address'),
-      role: Yup.string()
-        .required('Please select Role'),
-      password: Yup.string()
-        .min(8, 'Password must be at least 8 characters')
-        .max(50, 'Password must be at most 50 characters')
-        .matches(/[a-z]+/, 'Password must contain at least one lowercase letter')
-        .matches(/[A-Z]+/, 'Password must contain at least one uppercase letter')
-        .matches(/\d+/, 'Password must contain at least one number')
-        .matches(/[@$!%*#?&.]+/, 'Password must contain at least one special character')
-        .required('Please enter your password'),
-      password2: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords fields doesn\'t match')
-        .required('Please confirm your password'),
+      role: Yup.array()
+        .min(1, "At least one role should be selected")
+        .required("Role is required"),
       phoneNumber:Yup.string()
         .matches(/^[\d\s()/-]+$/, 'There are invalid characters in your phone number')
         .min(10, 'Phone number must be at least 10 digits')
@@ -120,8 +105,6 @@ const formik = useFormik({
     lastName: true,
     email: true,
     role: true,
-    password: true,
-    password2: true,
     phoneNumber: true,
     address: true,
     zipCode: true,
@@ -136,7 +119,6 @@ const formik = useFormik({
         firstName: values.firstName,
         lastName: values.lastName,
         role: values.role,
-        password: values.password,
         email: values.email,
         phoneNumber: values.phoneNumber,
         address: values.address,
@@ -144,24 +126,24 @@ const formik = useFormik({
         dob: values.dob,
         dateOfJoin: values.dateOfJoin,
       };
-      registerUserApi(submitValues)
+      updateUserAdmin(selectedUserId, submitValues)
         .then((response) => {
           console.log(response.data)
           console.log(response.status)
-          toast.success('Successfully Register')
+          toast.success('Successfully Updated')
           setSubmitting(false)
           setLoading(false)
         })
         .catch((error) => {
           if (error.response) {
             console.error(error.response.data)
-            toast.error('Register Failed')
+            toast.error('Update Failed')
           } else if (error.request) {
-            console.error('Request failed with status code ' + error.request.status)
-            toast.error('Register Failed')
+            console.error('Update failed with status code ' + error.request.status)
+            toast.error('Update Failed')
           } else {
             console.error('Error', error.message)
-            toast.error('Register Failed')
+            toast.error('Update Failed')
           }
           setSubmitting(false)
           setLoading(false)
@@ -169,30 +151,57 @@ const formik = useFormik({
     },})
 
   const handleChange = (prop) => (event) => {
-    formik.setFieldValue(prop, event.target.value);
-    formik.setTouched({ ...formik.touched, [prop]: true })
-}
+      formik.setFieldValue(prop, event.target.value);
+      formik.setTouched({ ...formik.touched, [prop]: true });
+    };
+
+    const handleRoleChange = (prop) => (event) => {
+      if (Array.isArray(event.target.value)) {
+        formik.setFieldValue(prop, event.target.value);
+      } else {
+        formik.setFieldValue(prop, [event.target.value]);
+      }
+      formik.setTouched({ ...formik.touched, [prop]: true });
+    };
 
   const handleDateChange = (prop) => (date) => {
     formik.setFieldValue(prop, date);
     formik.setTouched({ ...formik.touched, prop: true })
   }
 
-  const handleClickShowPassword = () => {
-    setPassValues({ ...passValues, showPassword: !passValues.showPassword })
-  }
+  useEffect(() => {
+    if (selectedUser) {
+      setSelectedUserId(selectedUser.userId);      
+      formik.setFieldValue("userName", selectedUser.userName);
+      formik.setFieldValue("firstName", selectedUser.firstName);
+      formik.setFieldValue("lastName", selectedUser.lastName);
 
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault()
-  }
+      const roleValues = Array.isArray(selectedUser.roles)
+        ? selectedUser.roles
+        : [selectedUser.roles];
 
-  const handleClickShowConfirmPassword = ()=> {
-    setPassValues({ ...passValues, showPassword2: !passValues.showPassword2 })
-  }
+        const mappedRoles = roleValues.map((role) => roleMapping[role] || role);
 
-  const handleMouseDownConfirmPassword = (event) => {
-    event.preventDefault()
-  }
+      formik.setFieldValue("role", mappedRoles);
+      formik.setFieldValue("email", selectedUser.email);
+      formik.setFieldValue("phoneNumber", selectedUser.phoneNumber);
+      formik.setFieldValue("address", selectedUser.address);
+      formik.setFieldValue("zipCode", selectedUser.zipCode);
+
+      const dob = selectedUser.dob
+        ? new Date(selectedUser.dob)
+        : formik.values.dob;
+
+      const dateOfJoin = selectedUser.dateOfJoin
+        ? new Date(selectedUser.dateOfJoin)
+        : formik.values.dateOfJoin;
+
+      formik.setFieldValue("dateOfJoin", dateOfJoin);
+      formik.setFieldValue("dob", dob);
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedUser]);
 
   const BirdhDateInput = forwardRef((props, ref) => {
     return <TextField fullWidth {...props} 
@@ -215,7 +224,9 @@ const formik = useFormik({
     <DatePickerWrapper>
       <Card>
         <CardHeader title='Select User' titleTypographyProps={{ variant: 'h6' }} />
-        <UserTable />
+        <UserTable 
+        setSelectedUser = {setSelectedUser}
+        />
         <Divider sx={{ margin: 0 }} />
         <form onSubmit={formik.handleSubmit} autoComplete='false'>
           <CardContent>
@@ -249,54 +260,7 @@ const formik = useFormik({
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email} />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor='form-layouts-separator-password'>Password</InputLabel>
-                  <OutlinedInput
-                    name="password"
-                    label="Password"
-                    id="password"
-                    value={formik.values.password}
-                    onChange={handleChange("password")}
-                    type={passValues.showPassword ? "text" : "password"}
-                    error={formik.touched.password && Boolean(formik.errors.password)}
-                    helperText={formik.touched.password && formik.errors.password}
-                    endAdornment={<InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        aria-label='toggle password visibility'
-                      >
-                        {passValues.showPassword ? <EyeOutline /> : <EyeOffOutline />}
-                      </IconButton>
-                    </InputAdornment>} />
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor='form-layouts-separator-password-2'>Confirm Password</InputLabel>
-                  <OutlinedInput
-                    name="password2"
-                    label="Confirm Password"
-                    id="confirm-password"
-                    value={formik.values.password2}
-                    onChange={handleChange("password2")}
-                    type={passValues.showPassword2 ? "text" : "password"}
-                    error={formik.touched.password2 && Boolean(formik.errors.password2)}
-                    helperText={formik.touched.password2 && formik.errors.password2}
-                    endAdornment={<InputAdornment position='end'>
-                      <IconButton
-                        edge='end'
-                        onClick={handleClickShowConfirmPassword}
-                        onMouseDown={handleMouseDownConfirmPassword}
-                        aria-label='toggle password visibility'
-                      >
-                        {passValues.showPassword2 ? <EyeOutline /> : <EyeOffOutline />}
-                      </IconButton>
-                    </InputAdornment>} />
-                </FormControl>
-              </Grid>
+             
               <Grid item xs={12}>
                 <Divider sx={{ marginBottom: 0 }} />
               </Grid>
@@ -342,15 +306,16 @@ const formik = useFormik({
                 <FormControl fullWidth>
                   <InputLabel id='form-layouts-separator-multiple-select-label'>Select Role</InputLabel>
                   <Select
+                    multiple
                     fullWidth
                     name="role"
                     labelId="form-layouts-separator-multiple-select-label"
                     value={formik.values.role}
-                    onChange={handleChange("role")}
+                    onChange={handleRoleChange("role")}
                     error={formik.touched.role && Boolean(formik.errors.role)}
                     input={<OutlinedInput label="Role" id="select-multiple-role" />}
                   >
-                    <MenuItem value='ROLE_ADMIN'>Admin</MenuItem>
+                    <MenuItem value='ROLE_ADMIN'>Administrator</MenuItem>
                     <MenuItem value='ROLE_DEAN'>Dean</MenuItem>
                     <MenuItem value='ROLE_CHAIRMAN'>Chairman</MenuItem>
                   </Select>
@@ -422,4 +387,4 @@ const formik = useFormik({
   )
 }
 
-export default FormLayoutsSeparator
+export default FormLayouts

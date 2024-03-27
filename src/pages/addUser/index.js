@@ -55,7 +55,7 @@ const formik = useFormik({
       userName: '',
       firstName: '',
       lastName: '',
-      role: '',
+      roles: [],
       password: '',
       password2: '',
       email: '',
@@ -81,8 +81,9 @@ const formik = useFormik({
       email: Yup.string()
         .email('Invalid email address')
         .required('Please enter email address'),
-      role: Yup.string()
-        .required('Please select Role'),
+        roles: Yup.array()
+        .min(1, "At least one role should be selected")
+        .required("Role is required"),
       password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
         .max(50, 'Password must be at most 50 characters')
@@ -118,7 +119,7 @@ const formik = useFormik({
     firstName: true,
     lastName: true,
     email: true,
-    role: true,
+    roles: true,
     password: true,
     password2: true,
     phoneNumber: true,
@@ -134,7 +135,7 @@ const formik = useFormik({
         userName: values.userName,
         firstName: values.firstName,
         lastName: values.lastName,
-        role: values.role,
+        roles: values.roles,
         password: values.password,
         email: values.email,
         phoneNumber: values.phoneNumber,
@@ -168,9 +169,18 @@ const formik = useFormik({
     },})
 
   const handleChange = (prop) => (event) => {
-    formik.setFieldValue(prop, event.target.value);
-    formik.setTouched({ ...formik.touched, [prop]: true })
-}
+      formik.setFieldValue(prop, event.target.value);
+      formik.setTouched({ ...formik.touched, [prop]: true });
+    };
+
+    const handleRolesChange = (prop) => (event) => {
+      if (Array.isArray(event.target.value)) {
+        formik.setFieldValue(prop, event.target.value);
+      } else {
+        formik.setFieldValue(prop, [event.target.value]);
+      }
+      formik.setTouched({ ...formik.touched, [prop]: true });
+    };
 
   const handleDateChange = (prop) => (date) => {
     formik.setFieldValue(prop, date);
@@ -349,15 +359,16 @@ const formik = useFormik({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel id='form-layouts-separator-multiple-select-label'>Select Role</InputLabel>
+                <InputLabel id='form-layouts-separator-multiple-select-label'>Select Roles</InputLabel>
                 <Select
+                  multiple
                   fullWidth
-                  name="role"
+                  name="roles"
                   labelId="form-layouts-separator-multiple-select-label"
-                  value={formik.values.role}
-                  onChange={handleChange("role")}
-                  error={formik.touched.role && Boolean(formik.errors.role)}
-                  input={<OutlinedInput label="Role" id="select-multiple-role" />}
+                  value={formik.values.roles}
+                  onChange={handleRolesChange("roles")}
+                  error={formik.touched.roles && Boolean(formik.errors.roles)}
+                  input={<OutlinedInput label="Roles" id="select-multiple-role" />}
                   >
                   <MenuItem value='ROLE_ADMIN'>Admin</MenuItem>
                   <MenuItem value='ROLE_DEAN'>Dean</MenuItem>

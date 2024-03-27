@@ -41,4 +41,14 @@ return response.data;
 
 export { getUsersByPage };
 
+const updateUserAdmin = async (selectedUserId, submitValues) => {
+  const response = await axios.put(`${url + "/user"}/${selectedUserId}/auth`, submitValues, {
+      headers: authHeader()
+  });
+
+  return response.data;
+};
+
+export { updateUserAdmin };
+
 
