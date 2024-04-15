@@ -41,7 +41,7 @@ const FormLayouts = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const roleMapping = {
+  const rolesMapping = {
     Administrator: 'ROLE_ADMIN',
     Dean: 'ROLE_DEAN',
     Chairman: 'ROLE_CHAIRMAN',
@@ -53,7 +53,7 @@ const formik = useFormik({
       userName: '',
       firstName: '',
       lastName: '',
-      role: [],
+      roles: [],
       email: '',
       phoneNumber: '',
       address: '',
@@ -77,7 +77,7 @@ const formik = useFormik({
       email: Yup.string()
         .email('Invalid email address')
         .required('Please enter email address'),
-      role: Yup.array()
+      roles: Yup.array()
         .min(1, "At least one role should be selected")
         .required("Role is required"),
       phoneNumber:Yup.string()
@@ -104,7 +104,7 @@ const formik = useFormik({
     firstName: true,
     lastName: true,
     email: true,
-    role: true,
+    roles: true,
     phoneNumber: true,
     address: true,
     zipCode: true,
@@ -118,7 +118,7 @@ const formik = useFormik({
         userName: values.userName,
         firstName: values.firstName,
         lastName: values.lastName,
-        role: values.role,
+        roles: values.roles,
         email: values.email,
         phoneNumber: values.phoneNumber,
         address: values.address,
@@ -155,7 +155,7 @@ const formik = useFormik({
       formik.setTouched({ ...formik.touched, [prop]: true });
     };
 
-    const handleRoleChange = (prop) => (event) => {
+    const handleRolesChange = (prop) => (event) => {
       if (Array.isArray(event.target.value)) {
         formik.setFieldValue(prop, event.target.value);
       } else {
@@ -176,13 +176,13 @@ const formik = useFormik({
       formik.setFieldValue("firstName", selectedUser.firstName);
       formik.setFieldValue("lastName", selectedUser.lastName);
 
-      const roleValues = Array.isArray(selectedUser.roles)
+      const rolesValues = Array.isArray(selectedUser.roles)
         ? selectedUser.roles
         : [selectedUser.roles];
 
-        const mappedRoles = roleValues.map((role) => roleMapping[role] || role);
+        const mappedRoles = rolesValues.map((roles) => rolesMapping[roles] || roles);
 
-      formik.setFieldValue("role", mappedRoles);
+      formik.setFieldValue("roles", mappedRoles);
       formik.setFieldValue("email", selectedUser.email);
       formik.setFieldValue("phoneNumber", selectedUser.phoneNumber);
       formik.setFieldValue("address", selectedUser.address);
@@ -310,9 +310,9 @@ const formik = useFormik({
                     fullWidth
                     name="role"
                     labelId="form-layouts-separator-multiple-select-label"
-                    value={formik.values.role}
-                    onChange={handleRoleChange("role")}
-                    error={formik.touched.role && Boolean(formik.errors.role)}
+                    value={formik.values.roles}
+                    onChange={handleRolesChange("roles")}
+                    error={formik.touched.role && Boolean(formik.errors.roles)}
                     input={<OutlinedInput label="Role" id="select-multiple-role" />}
                   >
                     <MenuItem value='ROLE_ADMIN'>Administrator</MenuItem>
