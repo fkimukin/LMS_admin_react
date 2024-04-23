@@ -26,6 +26,7 @@ import * as Yup from 'yup'
 import UserTable from './userTable'
 
 import {updateUserAdmin} from '../../api/api'
+import UpdatePassword from './updatePassword'
 
 
 
@@ -260,7 +261,6 @@ const formik = useFormik({
                   error={formik.touched.email && Boolean(formik.errors.email)}
                   helperText={formik.touched.email && formik.errors.email} />
               </Grid>
-             
               <Grid item xs={12}>
                 <Divider sx={{ marginBottom: 0 }} />
               </Grid>
@@ -381,9 +381,17 @@ const formik = useFormik({
               Clear
             </Button>
           </CardActions>
+
+          
         </form>
       </Card>
+      <UpdatePassword
+      selectedUserId= {selectedUserId}
+      />
     </DatePickerWrapper>
+
+      
+      
   )
 }
 
