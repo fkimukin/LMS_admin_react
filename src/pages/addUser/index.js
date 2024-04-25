@@ -19,18 +19,15 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import CircularProgress from '@mui/material/CircularProgress'
 import Select from '@mui/material/Select'
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useFormik } from 'formik';
+import { useFormik } from 'formik'
 import * as Yup from 'yup'
 
 // ** Icons Imports
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-
 import {registerUserApi} from '../../api/api'
-
-
+import Alert from '@mui/material/Alert'
+import Popover from '@mui/material/Popover'
 
 
 
@@ -47,7 +44,22 @@ const FormLayoutsSeparator = () => {
 }
 
   const [loading, setLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [popoverMessage, setPopoverMessage] = useState(null);
+  const [popoverAlert, setPopoverAlert] = useState('info');
 
+  const handleOpenPopover = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+    setPopoverMessage('')
+    setPopoverAlert('info')
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
 
 const formik = useFormik({
@@ -148,20 +160,24 @@ const formik = useFormik({
         .then((response) => {
           console.log(response.data)
           console.log(response.status)
-          toast.success('Successfully Register')
+          setPopoverMessage('Successfully Register')
+          setPopoverAlert('success')
           setSubmitting(false)
           setLoading(false)
         })
         .catch((error) => {
           if (error.response) {
             console.error(error.response.data)
-            toast.error('Register Failed')
+            setPopoverMessage('Register Failed : '+ error.response.data.message)
+            setPopoverAlert('error')
           } else if (error.request) {
             console.error('Request failed with status code ' + error.request.status)
-            toast.error('Register Failed')
+            setPopoverMessage('Register Failed : '+ error.request.status)
+            setPopoverAlert('error')
           } else {
             console.error('Error', error.message)
-            toast.error('Register Failed')
+            setPopoverMessage('Register Failed : '+ error.message)
+            setPopoverAlert('error')
           }
           setSubmitting(false)
           setLoading(false)
@@ -433,10 +449,24 @@ const formik = useFormik({
         sx={{ mr: 2 }}
         variant="contained"
         disabled={!(formik.dirty ) || loading}
+        onClick={handleOpenPopover}
+        aria-describedby={id}
       >
         {loading && <CircularProgress color="success" />}
         Submit
       </Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClosePopover}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+      <Alert severity={popoverAlert}>{popoverMessage}</Alert>
+      </Popover>
           <Button size='large' color='secondary' variant='outlined' onClick={handleClear}>
             Clear
           </Button>

@@ -12,13 +12,12 @@ import FormControl from '@mui/material/FormControl'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import CircularProgress from '@mui/material/CircularProgress'
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useFormik } from 'formik';
+import Alert from '@mui/material/Alert'
+import Popover from '@mui/material/Popover'
+import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
-
 import {updateUserAdmin} from '../../api/api'
 
 
@@ -35,6 +34,22 @@ const UpdatePassword = ({ selectedUserId }) => {
         showPassword2: false,
     
       })
+      const [anchorEl, setAnchorEl] = useState(null);
+      const [popoverMessage, setPopoverMessage] = useState(null);
+      const [popoverAlert, setPopoverAlert] = useState('info');
+
+      const handleOpenPopover = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+    
+      const handleClosePopover = () => {
+        setAnchorEl(null);
+        setPopoverMessage('')
+    setPopoverAlert('info')
+      };
+    
+      const open = Boolean(anchorEl);
+      const id = open ? 'simple-popover' : undefined;    
 
   const handleClear = () => {
     formik.resetForm();
@@ -74,20 +89,24 @@ const formik = useFormik({
         .then((response) => {
         console.log(response.data)
         console.log(response.status)
-        toast.success('Successfully Password Updated')
+        setPopoverMessage('Successfully Password Updated')
+        setPopoverAlert('success')
         setSubmitting(false)
         setLoading(false)
         })
         .catch((error) => {
             if (error.response) {
             console.error(error.response.data)
-            toast.error('Update Password Failed')
+            setPopoverMessage('Update Password Failed : '+error.response.data.message)
+            setPopoverAlert('error')
             } else if (error.request) {
             console.error('Update Password failed with status code ' + error.request.status)
-            toast.error('Update Password Failed')
+            setPopoverMessage('Update Password Failed : ' + error.request.status)
+            setPopoverAlert('error')
             } else {
             console.error('Error', error.message)
-            toast.error('Update Password Failed')
+            setPopoverMessage('Update Password Failed : '+ error.request.status)
+            setPopoverAlert('error')
             }
             setSubmitting(false)
             setLoading(false)
@@ -187,10 +206,25 @@ return (
               sx={{ mr: 2 }}
               variant="contained"
               disabled={!(formik.dirty) || loading}
+              onClick={handleOpenPopover}
+              aria-describedby={id}
             >
               {loading && <CircularProgress color="success" />}
               Change Password
             </Button>
+            <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClosePopover}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+      <Alert severity={popoverAlert}>{popoverMessage}</Alert>
+      </Popover>
+
             <Button size='large' color='secondary' variant='outlined' onClick={handleClear}>
               Clear
             </Button>
