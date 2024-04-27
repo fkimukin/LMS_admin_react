@@ -89,6 +89,12 @@ const columns = [
         label: 'Phone',
         minWidth: 100,
         align: 'right',
+    },
+    {
+        id: 'delete',
+        label: 'Delete',
+        minWidth: 50,
+        align: 'right',
     }
         ]
 
