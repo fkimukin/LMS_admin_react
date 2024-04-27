@@ -52,3 +52,12 @@ const updateUserAdmin = async (selectedUserId, submitValues) => {
 export { updateUserAdmin };
 
 
+const deleteUserApi = async (userId) => {
+  const response = await axios.delete(`${url + "/user"}/${userId}/auth`, {
+    headers: authHeader()
+  });
+
+return response.data;
+}
+
+export { deleteUserApi };

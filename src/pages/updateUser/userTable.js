@@ -1,154 +1,199 @@
-// ** React Imports
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
+import { getUsersByPage, deleteUserApi } from '../../api/api';
+import Icon from '@mdi/react';
+import { mdiTrashCan } from '@mdi/js';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert'
+import Popover from '@mui/material/Popover'
+// Third-party Imports
+import { toast, ToastContainer } from 'react-toastify'
+import Snackbar from '@mui/material/Snackbar';
 
-// ** MUI Imports
-import Paper from '@mui/material/Paper'
-import Table from '@mui/material/Table'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TablePagination from '@mui/material/TablePagination'
-import {getUsersByPage} from '../../api/api'
+const UserTable = ({ setSelectedUser }) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [userData, setUserData] = useState([]);
+  const [userDataElements, setUserDataElements] = useState([]);
+  const [refreshPage, setRefreshPage] = useState(0);
+  const [deleteUserId, setDeleteUserId] = useState(null);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
 
-const columns = [
-    { id: 'userId', label: 'User Id', minWidth: 150 },
-    { id: 'userName', label: 'User Name', minWidth: 150 },
-    { id: 'email', label: 'email', minWidth: 150 },
-    { id: 'roles', label: 'Roles', minWidth: 150 },
-    {
-    id: 'firstName',
-    label: 'First Name',
-    minWidth: 150,
-    align: 'right',
-    },
-    {
-    id: 'lastName',
-    label: 'Last Name',
-    minWidth: 150,
-    align: 'right',
-    },
-    {
-    id: 'phone',
-    label: 'Phone',
-    minWidth: 100,
-    align: 'right',
+  const [snackbarMessage, setSnacbarMessage] = useState(null);
+  const [snackbarAlert, setSnacbarAlert] = useState('info');
+
+  // Popover field
+  // const [anchorEl, setAnchorEl] = useState(null);
+//   const handleOpenPopover = (event) => {
+//     setAnchorEl(event.currentTarget);
+//   };
+
+//   const handleClosePopover = () => {
+//     setAnchorEl(null);
+//     setPopoverMessage('')
+//     setPopoverAlert('info')
+//   };
+// const open = Boolean(anchorEl);
+// const id = open ? 'simple-popover' : undefined;    
+
+// Snackbar field
+const [openSnackbar, setOpenSnackbar] = useState(false)
+
+  const handleClickSnackbar = () => {
+    setOpenSnackbar(true)
+  }
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
     }
-]
-
-const UserTable = ({ setSelectedUser })=> {
-  // ** States
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [userData, setUserData] = useState([]);
-    const [userDataElements, setUserDataElements] = useState([]);
-
-
-  //const [userDataPages, setUserDataPages] = useState([]);
-
-    const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-    }
-
-    const handleChangeRowsPerPage = event => {
-    setRowsPerPage(+event.target.value)
-    setPage(0)
-    }
-
-    useEffect(() => {
-    getUsersByPage(page,rowsPerPage)
-    .then((response) => {
-        console.log(response)
-        setUserDataElements(response.totalElements)
-        setUserData(response.content)
-
-        //setUserDataPages(response.totalPages)
-    })
-}, [page, rowsPerPage ]);
-
-const columns = [
-    { id: 'userId', label: 'User Id', minWidth: 150 },
-    { id: 'userName', label: 'User Name', minWidth: 150 },
-    { id: 'email', label: 'email', minWidth: 150 },
-    { id: 'roles', label: 'Roles', minWidth: 150 },
-    {
-        id: 'firstName',
-        label: 'First Name',
-        minWidth: 150,
-        align: 'right',
-    },
-    {
-        id: 'lastName',
-        label: 'Last Name',
-        minWidth: 150,
-        align: 'right',
-    },
-    {
-        id: 'phone',
-        label: 'Phone',
-        minWidth: 100,
-        align: 'right',
-    },
-    {
-        id: 'delete',
-        label: 'Delete',
-        minWidth: 50,
-        align: 'right',
-    }
-        ]
-
-return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-            <Table stickyHeader aria-label='sticky table'>
-                <TableHead>
-            <TableRow>
-                {columns.map(column => (
-                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
-                    {column.label}
-                </TableCell>
-                ))}
-            </TableRow>
-                </TableHead>
-        <TableBody>
-        {userData.map(user => (
-    <TableRow
-        key={user.userId}
-        sx={{ cursor: 'pointer' }}
-        hover
-        role='checkbox'
-        tabIndex={-1}
-        onClick={() => setSelectedUser(user)}
-        >
-        <TableCell align='left'>{user.userId}</TableCell>
-        <TableCell align='left'>{user.userName}</TableCell>
-        <TableCell align='left'>{user.email}</TableCell>
-        <TableCell align='left'>{user.roles.map((role, index) => (
-    <div key={index}>
-      {index > 0 ? <span> </span> : null}
-      <span>{role}</span>
-    </div>
-  ))}</TableCell>
-        <TableCell align='right'>{user.firstName}</TableCell>
-        <TableCell align='right'>{user.lastName}</TableCell>
-        <TableCell align='right'>{user.phoneNumber}</TableCell>
-        </TableRow>
-    ))}
-        </TableBody>
-        </Table>
-        </TableContainer>
-            <TablePagination
-            rowsPerPageOptions={[5,10, 25, 100]}
-            component='div'
-            count={userDataElements}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-    </Paper>
-    )
+    setOpenSnackbar(false)
 }
 
-export default UserTable
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+  const deleteUser = () => {
+    deleteUserApi(deleteUserId)
+      .then(() => {
+        setUserData(userData.filter(user => user.userId !== deleteUserId));
+        setRefreshPage(refreshPage + 1);
+        setDeleteUserId(null);
+        setSnacbarMessage('User Successfully Deleted')
+        setSnacbarAlert('success') 
+             
+      })
+      .catch(error => {
+        console.error("Error deleting user:", error);
+        setSnacbarMessage('Delete User Failed : '+error.response.data.message)
+        setSnacbarAlert('error')
+      }); 
+    setConfirmationOpen(false);
+  };
+
+  const handleOpenConfirmation = (userId) => {
+    setDeleteUserId(userId);
+    setConfirmationOpen(true);
+  };
+
+  useEffect(() => {
+    getUsersByPage(page, rowsPerPage)
+      .then((response) => {
+        setUserDataElements(response.totalElements);
+        setUserData(response.content);
+      })
+      .catch(error => {
+        console.error("Error fetching users:", error);
+      });
+  }, [page, rowsPerPage, refreshPage]);
+
+  const columns = [
+    { id: 'userId', label: 'User Id', minWidth: 150 },
+    { id: 'userName', label: 'User Name', minWidth: 150 },
+    { id: 'email', label: 'Email', minWidth: 150 },
+    { id: 'roles', label: 'Roles', minWidth: 150 },
+    { id: 'firstName', label: 'First Name', minWidth: 150, align: 'right' },
+    { id: 'lastName', label: 'Last Name', minWidth: 150, align: 'right' },
+    { id: 'phone', label: 'Phone', minWidth: 100, align: 'left' },
+    { id: 'delete', label: 'Delete', minWidth: 50, align: 'center' }
+  ];
+
+  return (
+    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label='sticky table'>
+          <TableHead>
+            <TableRow>
+              {columns.map(column => (
+                <TableCell key={column.id} align={column.align} sx={{ minWidth: column.minWidth }}>
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {userData.map(user => (
+              <TableRow
+                key={user.userId}
+                sx={{ cursor: 'pointer' }}
+                hover
+                role='checkbox'
+                tabIndex={-1}
+                onClick={() => setSelectedUser(user)}
+              >
+                <TableCell align='left'>{user.userId}</TableCell>
+                <TableCell align='left'>{user.userName}</TableCell>
+                <TableCell align='left'>{user.email}</TableCell>
+                <TableCell align='left'>{user.roles.map((role, index) => (
+                  <div key={index}>
+                    {index > 0 ? <span> </span> : null}
+                    <span>{role}</span>
+                  </div>
+                ))}</TableCell>
+                <TableCell align='right'>{user.firstName}</TableCell>
+                <TableCell align='right'>{user.lastName}</TableCell>
+                <TableCell align='right'>{user.phoneNumber}</TableCell>
+                <TableCell align='center'>
+                  <Icon path={mdiTrashCan} size={1} color="red" onClick={() => {
+                                            handleOpenConfirmation(user.userId);
+                                            // Call your second method here
+                                            handleClickSnackbar;
+                                        }} />
+                                        
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 100]}
+        component='div'
+        count={userDataElements}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+      <Dialog open={confirmationOpen} onClose={() => setConfirmationOpen(false)}>
+        <DialogTitle>Delete User</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this user?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmationOpen(false)}>Cancel</Button>
+          <Button onClick={deleteUser}>Delete</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar open={openSnackbar} onClose={handleCloseSnackbar} autoHideDuration={3000}>
+                    <Alert severity={snackbarAlert}>{snackbarMessage}</Alert>
+                    </Snackbar>
+
+    </Paper>
+
+
+
+  );
+};
+
+export default UserTable;
