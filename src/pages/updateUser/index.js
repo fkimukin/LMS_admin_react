@@ -34,6 +34,7 @@ const FormLayouts = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [popoverMessage, setPopoverMessage] = useState(null);
   const [popoverAlert, setPopoverAlert] = useState('info');
+  const [refreshPage, setRefreshPage] = useState(0);
 
   const handleOpenPopover = (event) => {
     setAnchorEl(event.currentTarget);
@@ -44,6 +45,8 @@ const FormLayouts = () => {
     setPopoverMessage('')
     setPopoverAlert('info')
   };
+
+
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -148,6 +151,7 @@ const formik = useFormik({
           setPopoverAlert('success')
           setSubmitting(false)
           setLoading(false)
+          setRefreshPage(refreshPage + 1);
         })
         .catch((error) => {
           if (error.response) {
@@ -165,6 +169,7 @@ const formik = useFormik({
           }
           setSubmitting(false)
           setLoading(false)
+          
         })
     },})
 
@@ -244,6 +249,8 @@ const formik = useFormik({
         <CardHeader title='Select User' titleTypographyProps={{ variant: 'h6' }} />
         <UserTable 
         setSelectedUser = {setSelectedUser}
+        refreshPage = {refreshPage}
+        setRefreshPage = {setRefreshPage}
         />
         <Divider sx={{ margin: 0 }} />
         <form onSubmit={formik.handleSubmit} autoComplete='false'>

@@ -16,18 +16,16 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert'
-
+import Snackbar from '@mui/material/Snackbar';
 //import Popover from '@mui/material/Popover'
 
-// Third-party Imports
-import Snackbar from '@mui/material/Snackbar';
 
-const UserTable = ({ setSelectedUser }) => {
+const UserTable = ({ setSelectedUser, setRefreshPage, refreshPage }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [userData, setUserData] = useState([]);
   const [userDataElements, setUserDataElements] = useState([]);
-  const [refreshPage, setRefreshPage] = useState(0);
+//   const [refreshPage, setRefreshPage] = useState(0);
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
 
@@ -46,9 +44,9 @@ const UserTable = ({ setSelectedUser }) => {
 //     setPopoverAlert('info')
 //   };
 // const open = Boolean(anchorEl);
-// const id = open ? 'simple-popover' : undefined;    
+// const id = open ? 'simple-popover' : undefined;
 
-// Snackbar field
+// <Snackbar fields
 const [openSnackbar, setOpenSnackbar] = useState(false)
 
 const [state, setState] = useState({
@@ -68,8 +66,7 @@ const { vertical, horizontal, open } = state
     }
     setOpenSnackbar(false)
 }
-
-
+// <Snackbar fields/>
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -87,8 +84,7 @@ const { vertical, horizontal, open } = state
         setRefreshPage(refreshPage + 1);
         setDeleteUserId(null);
         setSnacbarMessage('User Successfully Deleted')
-        setSnacbarAlert('success') 
-             
+        setSnacbarAlert('success')              
       })
       .catch(error => {
         console.error("Error deleting user:", error);
@@ -205,8 +201,6 @@ const { vertical, horizontal, open } = state
         </Snackbar>
 
     </Paper>
-
-
 
   );
 };
