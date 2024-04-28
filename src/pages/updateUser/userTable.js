@@ -16,9 +16,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert'
-import Popover from '@mui/material/Popover'
+
+//import Popover from '@mui/material/Popover'
+
 // Third-party Imports
-import { toast, ToastContainer } from 'react-toastify'
 import Snackbar from '@mui/material/Snackbar';
 
 const UserTable = ({ setSelectedUser }) => {
@@ -49,6 +50,13 @@ const UserTable = ({ setSelectedUser }) => {
 
 // Snackbar field
 const [openSnackbar, setOpenSnackbar] = useState(false)
+
+const [state, setState] = useState({
+    open: false,
+    vertical: 'top',
+    horizontal: 'center'
+  })
+const { vertical, horizontal, open } = state
 
   const handleClickSnackbar = () => {
     setOpenSnackbar(true)
@@ -84,7 +92,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false)
       })
       .catch(error => {
         console.error("Error deleting user:", error);
-        setSnacbarMessage('Delete User Failed : '+error.response.data.message)
+        setSnacbarMessage('Delete User Failed : '+error)
         setSnacbarAlert('error')
       }); 
     setConfirmationOpen(false);
@@ -154,9 +162,11 @@ const [openSnackbar, setOpenSnackbar] = useState(false)
                 <TableCell align='right'>{user.phoneNumber}</TableCell>
                 <TableCell align='center'>
                   <Icon path={mdiTrashCan} size={1} color="red" onClick={() => {
+                                            handleClickSnackbar();
                                             handleOpenConfirmation(user.userId);
+
                                             // Call your second method here
-                                            handleClickSnackbar;
+                                            
                                         }} />
                                         
                 </TableCell>
@@ -185,9 +195,14 @@ const [openSnackbar, setOpenSnackbar] = useState(false)
         </DialogActions>
       </Dialog>
 
-      <Snackbar open={openSnackbar} onClose={handleCloseSnackbar} autoHideDuration={3000}>
-                    <Alert severity={snackbarAlert}>{snackbarMessage}</Alert>
-                    </Snackbar>
+      <Snackbar 
+        key={'top' + 'center'}
+        anchorOrigin={{ vertical, horizontal }}
+        open={openSnackbar} 
+        onClose={handleCloseSnackbar} 
+        autoHideDuration={6000}>
+            <Alert severity={snackbarAlert}>{snackbarMessage}</Alert>
+        </Snackbar>
 
     </Paper>
 
