@@ -61,3 +61,34 @@ return response.data;
 }
 
 export { deleteUserApi };
+
+const getCurrentUser = async () => {
+  const response = await axios.get(`${url + "/user"}`, {
+      headers: authHeader()
+  });
+
+  return response.data;
+};
+
+export { getCurrentUser };
+
+const updateUser = async (submitValues) => {
+  const response = await axios.put(`${url + "/user"}/user-update`, submitValues, {
+      headers: authHeader()
+  });
+
+  return response.data;
+};
+
+export { updateUser };
+
+const updateUserPassword = async (submitValues) => {
+  const response = await axios.patch(`${url + "/user"}/auth`, submitValues, {
+      headers: authHeader()
+  });
+
+  return response.data;
+};
+
+export { updateUserPassword };
+

@@ -17,6 +17,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar';
+
 //import Popover from '@mui/material/Popover'
 
 
@@ -25,6 +26,7 @@ const UserTable = ({ setSelectedUser, setRefreshPage, refreshPage }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [userData, setUserData] = useState([]);
   const [userDataElements, setUserDataElements] = useState([]);
+
 //   const [refreshPage, setRefreshPage] = useState(0);
   const [deleteUserId, setDeleteUserId] = useState(null);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
@@ -66,6 +68,7 @@ const { vertical, horizontal, open } = state
     }
     setOpenSnackbar(false)
 }
+
 // <Snackbar fields/>
 
   const handleChangePage = (event, newPage) => {
