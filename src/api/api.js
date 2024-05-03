@@ -92,3 +92,11 @@ const updateUserPassword = async (submitValues) => {
 
 export { updateUserPassword };
 
+// --------------------------- Teacher ---------------------------
+
+const registerTeacherApi = async (values) => {
+  return await axios.post(`${url}/teacher-register`, values, {headers: authHeader()});
+};
+
+export { registerTeacherApi };
+

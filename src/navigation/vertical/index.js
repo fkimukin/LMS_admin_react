@@ -57,6 +57,14 @@ const navigation = () => {
       path: '/updateUser'
     },
     {
+      sectionTitle: 'Teacher Interface'
+    },
+    {
+      title: 'Register New Teacher',
+      icon: FormatLetterCase,
+      path: '/addTeacher'
+    },
+    {
       title: 'Icons',
       path: '/icons',
       icon: GoogleCirclesExtended
