@@ -67,7 +67,7 @@ const formik = useFormik({
       userName: '',
       firstName: '',
       lastName: '',
-      roles: [],
+      roles: ['teacher'],
       password: '',
       password2: '',
       email: '',
@@ -199,14 +199,14 @@ const formik = useFormik({
       formik.setTouched({ ...formik.touched, [prop]: true });
     };
 
-    // const handleRolesChange = (prop) => (event) => {
-    //   if (Array.isArray(event.target.value)) {
-    //     formik.setFieldValue(prop, event.target.value);
-    //   } else {
-    //     formik.setFieldValue(prop, [event.target.value]);
-    //   }
-    //   formik.setTouched({ ...formik.touched, [prop]: true });
-    // };
+    const handleRolesChange = (prop) => (event) => {
+      if (Array.isArray(event.target.value)) {
+        formik.setFieldValue(prop, event.target.value);
+      } else {
+        formik.setFieldValue(prop, [event.target.value]);
+      }
+      formik.setTouched({ ...formik.touched, [prop]: true });
+    };
 
   const handleDateChange = (prop) => (date) => {
     formik.setFieldValue(prop, date);
@@ -244,6 +244,14 @@ const formik = useFormik({
     helperText={formik.touched.dateOfJoin && formik.errors.dateOfJoin}
     label='Date Of Join' autoComplete='off' />
   })
+
+  // const DOLInput = forwardRef((props, ref) => {
+  //   return <TextField fullWidth {...props} 
+  //   inputRef={ref} 
+  //   error={formik.touched.dateOfJoin && Boolean(formik.errors.dateOfJoin)}
+  //   helperText={formik.touched.dateOfJoin && formik.errors.dateOfJoin}
+  //   label='Date Of Leave' autoComplete='off' />
+  // })
 
   return (
     <DatePickerWrapper>
@@ -429,7 +437,21 @@ const formik = useFormik({
                 error={formik.touched.zipCode && Boolean(formik.errors.zipCode)}
                 helperText={formik.touched.zipCode && formik.errors.zipCode}
               />
-            </Grid>        
+            </Grid>  
+
+            {/* <Grid item xs={12} sm={6}>
+              <DatePicker
+                fullWidth
+                name="dol"
+                selected={formik.values.dateOfJoin}
+                placeholderText="MM-DD-YYYY"
+                customInput={<DOLInput />}
+                id="form-layouts-separator-dateofleave"
+                onChange={handleDateChange("dateOfLeave")}                
+              />
+            </Grid> */}
+
+
           </Grid>
         </CardContent>
         <Divider sx={{ margin: 0 }} />
