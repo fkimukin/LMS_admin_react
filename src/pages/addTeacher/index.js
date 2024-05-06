@@ -95,7 +95,7 @@ const formik = useFormik({
       email: Yup.string()
         .email('Invalid email address')
         .required('Please enter email address'),
-        roles: Yup.array()
+      roles: Yup.array()
         .min(1, "At least one role should be selected")
         .required("Role is required"),
       password: Yup.string()
@@ -126,10 +126,10 @@ const formik = useFormik({
         .max(new Date(),'Date of birth must be in the past'),
       dateOfJoin: Yup.date()
         .required('Please select date of join'),
-      dateOfLeave: Yup.date()
-        .required('Please select date of leave'),
+      dateOfLeave: Yup.date(),
+        // .required('Please select date of leave'),
       status: Yup.string()
-        .required('Please select status')
+        // .required('Please select status')
     }),
     validateOnChange: true,
   initialTouched: {
@@ -145,7 +145,7 @@ const formik = useFormik({
     zipCode: true,
     dob: true,
     dateOfJoin: true,
-    dateOfLeave: false,
+    dateOfLeave: true,
     status: true,
   },
     onSubmit: (values, { setSubmitting }) => {
@@ -248,8 +248,8 @@ const formik = useFormik({
   // const DOLInput = forwardRef((props, ref) => {
   //   return <TextField fullWidth {...props} 
   //   inputRef={ref} 
-  //   error={formik.touched.dateOfJoin && Boolean(formik.errors.dateOfJoin)}
-  //   helperText={formik.touched.dateOfJoin && formik.errors.dateOfJoin}
+  //   error={formik.touched.dateOfLeave && Boolean(formik.errors.dateOfLeave)}
+  //   helperText={formik.touched.dateOfLeave && formik.errors.dateOfLeave}
   //   label='Date Of Leave' autoComplete='off' />
   // })
 
@@ -443,7 +443,7 @@ const formik = useFormik({
               <DatePicker
                 fullWidth
                 name="dol"
-                selected={formik.values.dateOfJoin}
+                selected={formik.values.dateOfLeave}
                 placeholderText="MM-DD-YYYY"
                 customInput={<DOLInput />}
                 id="form-layouts-separator-dateofleave"
