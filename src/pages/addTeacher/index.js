@@ -31,7 +31,7 @@ import Popover from '@mui/material/Popover'
 
 
 
-const FormLayoutsSeparator = () => {
+const TeacherAdd = () => {
   const [passValues, setPassValues] = useState({
     
     showPassword: false,
@@ -64,7 +64,8 @@ const FormLayoutsSeparator = () => {
 
 const formik = useFormik({
     initialValues: {
-      userName: '',
+      teacherNo: '',
+      branch: '',
       firstName: '',
       lastName: '',
       roles: ['teacher'],
@@ -76,11 +77,15 @@ const formik = useFormik({
       zipCode: '',
       dob: '',
       dateOfJoin: '',
-      dateOfLeave: null,
+      dateOfLeave: '',
       status: 'Active',
     },
     validationSchema: Yup.object({
-      userName: Yup.string()
+      teacherNo: Yup.string()
+        .min(2, 'First name must be at least 2 characters')
+        .max(50, 'First name must be at most 50 characters')
+        .required('Please enter first name'),
+      branch: Yup.string()
         .min(2, 'First name must be at least 2 characters')
         .max(50, 'First name must be at most 50 characters')
         .required('Please enter first name'),
@@ -96,8 +101,10 @@ const formik = useFormik({
         .email('Invalid email address')
         .required('Please enter email address'),
         roles: Yup.array()
-        .min(1, "At least one role should be selected")
-        .required("Role is required"),
+        .min(1, "At least one role should be selected"),
+
+        // .required("Role is required"),
+        
       password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
         .max(50, 'Password must be at most 50 characters')
@@ -126,36 +133,24 @@ const formik = useFormik({
         .max(new Date(),'Date of birth must be in the past'),
       dateOfJoin: Yup.date()
         .required('Please select date of join'),
-      dateOfLeave: Yup.date()
-        .required('Please select date of leave'),
+      dateOfLeave: Yup.date(),
+
+        //.required('Please select date of leave'),
       status: Yup.string()
-        .required('Please select status')
+
+        //.required('Please select status')
     }),
     validateOnChange: true,
-  initialTouched: {
-    userName: true,
-    firstName: true,
-    lastName: true,
-    email: true,
-    roles: true,
-    password: true,
-    password2: true,
-    phoneNumber: true,
-    address: true,
-    zipCode: true,
-    dob: true,
-    dateOfJoin: true,
-    dateOfLeave: false,
-    status: true,
-  },
+  
     onSubmit: (values, { setSubmitting }) => {
       setLoading(true)
 
       let submitValues = {
-        userName: values.userName,
+        teacherNo: values.teacherNo,
+        branch: values.branch,
         firstName: values.firstName,
         lastName: values.lastName,
-        roles: [values.roles],
+        roles: values.roles,
         password: values.password,
         email: values.email,
         phoneNumber: values.phoneNumber,
@@ -269,29 +264,36 @@ const formik = useFormik({
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                name="userName"
-                label="Username"
-                placeholder="carterLeonard"
-                value={formik.values.userName}
-                onChange={handleChange("userName")}
-                onBlur={handleChange("userName")}
-                error={formik.touched.userName && Boolean(formik.errors.userName)}
-                helperText={formik.touched.userName && formik.errors.userName} 
+                name="teacher No"
+                label="teacherNo"
+                placeholder="1001"
+                value={formik.values.teacherNo}
+                onChange={handleChange("teacherNo")}
+                onBlur={handleChange("teacherNo")}
+                error={formik.touched.teacherNo && Boolean(formik.errors.teacherNo)}
+                helperText={formik.touched.teacherNo && formik.errors.teacherNo} 
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="email"
-                name="email"
-                label="Email Address"
-                placeholder="carterleonard@gmail.com"
-                value={formik.values.email}
-                onChange={handleChange("email")}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
-              />
+              <FormControl fullWidth>
+                <InputLabel id='form-layouts-separator-multiple-select-label'>Select Branch</InputLabel>
+                <Select
+                  
+                  fullWidth
+                  name="branch"
+                  labelId="form-layouts-separator-multiple-select-branch"
+                  value={formik.values.branch}
+                  onChange={handleChange("branch")}
+                  error={formik.touched.branch && Boolean(formik.errors.branch)}
+                  input={<OutlinedInput label="branch" id="select-multiple-branch" />}
+                  >
+                  <MenuItem value='Math'>Math</MenuItem>
+                  <MenuItem value='Science'>Science</MenuItem>
+                  <MenuItem value='Social Science'>Social Science</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
+            
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel htmlFor='form-layouts-separator-password'>Password</InputLabel>
@@ -318,6 +320,19 @@ const formik = useFormik({
                   }
                 />
               </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                type="email"
+                name="email"
+                label="Email Address"
+                placeholder="carterleonard@gmail.com"
+                value={formik.values.email}
+                onChange={handleChange("email")}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
@@ -490,4 +505,4 @@ const formik = useFormik({
   )
 }
 
-export default FormLayoutsSeparator
+export default TeacherAdd
