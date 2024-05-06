@@ -68,7 +68,7 @@ const formik = useFormik({
       branch: '',
       firstName: '',
       lastName: '',
-      roles: ['teacher'],
+      roles: ['ROLE_TEACHER'],
       password: '',
       password2: '',
       email: '',
