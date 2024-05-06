@@ -126,6 +126,10 @@ const formik = useFormik({
         .max(new Date(),'Date of birth must be in the past'),
       dateOfJoin: Yup.date()
         .required('Please select date of join'),
+      dateOfLeave: Yup.date()
+        .required('Please select date of leave'),
+      status: Yup.string()
+        .required('Please select status')
     }),
     validateOnChange: true,
   initialTouched: {
