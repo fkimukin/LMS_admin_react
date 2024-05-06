@@ -243,8 +243,8 @@ const formik = useFormik({
   // const DOLInput = forwardRef((props, ref) => {
   //   return <TextField fullWidth {...props} 
   //   inputRef={ref} 
-  //   error={formik.touched.dateOfJoin && Boolean(formik.errors.dateOfJoin)}
-  //   helperText={formik.touched.dateOfJoin && formik.errors.dateOfJoin}
+  //   error={formik.touched.dateOfLeave && Boolean(formik.errors.dateOfLeave)}
+  //   helperText={formik.touched.dateOfLeave && formik.errors.dateOfLeave}
   //   label='Date Of Leave' autoComplete='off' />
   // })
 
@@ -458,7 +458,7 @@ const formik = useFormik({
               <DatePicker
                 fullWidth
                 name="dol"
-                selected={formik.values.dateOfJoin}
+                selected={formik.values.dateOfLeave}
                 placeholderText="MM-DD-YYYY"
                 customInput={<DOLInput />}
                 id="form-layouts-separator-dateofleave"
